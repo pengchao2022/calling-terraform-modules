@@ -1,0 +1,48 @@
+name: 'Terraform Deploy Resources'
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+    paths:
+      - '**.tf'
+      - '.github/workflows/**'
+
+permissions:
+  id-token: write # used for OIDC exchange token
+  contents: read  # use contents 
+
+jobs:
+  deploy-s3-bucket:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Checkout code 
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Terraform Init # terraform will automatically read your backend.tf file
+        run: terraform init 
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+
+
+
+
+    
