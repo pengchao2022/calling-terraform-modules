@@ -28,6 +28,11 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
+   
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
 
       - name: Terraform Init # terraform will automatically read your backend.tf file
         run: terraform init 
