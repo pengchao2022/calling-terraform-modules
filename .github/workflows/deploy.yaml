@@ -46,6 +46,13 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
 
+      - name: Show Output
+        run: |
+          URL=$(terraform output -raw final_website_url)
+          echo "--------------------------------------------------------"
+          echo "website URL: $URL"
+          echo "--------------------------------------------------------"
+
 
 
 
